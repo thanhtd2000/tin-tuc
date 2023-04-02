@@ -28,13 +28,7 @@ class UserController extends Controller
     {
         return view('admin.index');
     }
-    public function home()
-    {
-        $categories = Category::all();
-        $posts = Post::latest()->where('status', '!=', 0)->paginate(5);
-        $latestPosts = Post::latest()->take(5)->get();
-        return view('client.index', compact('posts', 'categories', 'latestPosts'));
-    }
+
     public function show()
     {
         $user = User::latest()->paginate(5);

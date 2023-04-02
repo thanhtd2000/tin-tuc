@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Like;
 use App\Models\Post;
+use App\Models\User;
 use App\Models\Category;
-use App\Models\PasswordReset;
 use Illuminate\Http\Request;
+use App\Models\PasswordReset;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -116,5 +119,21 @@ class PostController extends Controller
             $post->save();
             return redirect()->route('posts.show')->with('message', 'Update trạng thái thành công');
         }
+    }
+
+    public function like(Post $post)
+    {
+        $user = Auth::user();
+        if (!$post->hasLikedPost($user)) {
+            $like = new Like();
+            $like->user_id = $user->id;
+            $like->post_id = $post->id;
+            $like->save();
+        } else {
+            $like = Like::where('user_id', $user->id);
+            $like->delete();
+        };
+
+        return back();
     }
 }

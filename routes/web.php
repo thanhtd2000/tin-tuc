@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\client\HomeController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get("/", [UserController::class, 'home'])->name('client.home');
+Route::get("/", [HomeController::class, 'home'])->name('client.home');
 Route::get("/login", [AuthController::class, 'getLogin'])->name('login');
 Route::post("/login", [AuthController::class, 'checkLogin'])->name('checkLogin');
 Route::get("/dang-ky", [AuthController::class, 'getSignup']);
@@ -40,7 +41,7 @@ Route::post("/checkcode", [AuthController::class, 'checkcode'])->name('checkcode
 
 
 Route::middleware('checkAdmin')->prefix('admin')->group(function () {
-    Route::get("/index", [UserController::class, 'index']);
+    Route::get("/index", [UserController::class, 'index'])->name('admin.index');
     Route::prefix('categories')->group(function () {
         Route::get("/index", [CategoryController::class, 'show']);
         Route::get("/create", [CategoryController::class, 'create']);
@@ -72,9 +73,17 @@ Route::middleware('checkAdmin')->prefix('admin')->group(function () {
         Route::get("/update-stt/{id}", [PostController::class, 'updatestt'])->name('posts.updatestt');
         Route::post("/index", [PostController::class, 'search'])->name('posts.search');
     });
+    Route::prefix('comments')->group(function () {
+        Route::get("/index", [CommentController::class, 'index'])->name('comments.index');
+        Route::get("/delete/{id}", [CommentController::class, 'delete']);
+        Route::post("/index", [CommentController::class, 'search'])->name('comments.search');
+    });
 });
 ///////////
 Route::post("/create", [HomeController::class, 'store'])->name('user_post');
 Route::get("/category/{id}", [HomeController::class, 'showCategory'])->name('client.showCategory');
 Route::get("/post-detail/{id}", [HomeController::class, 'showPostDetail'])->name('client.postDetail');
 Route::post("/search-post", [HomeController::class, 'searchPost'])->name('client.searchPost');
+Route::post("/user-comment/{post_id}", [HomeController::class, 'storeComment'])->name('client.userComment');
+Route::get("/user-delete-comment/{id}", [HomeController::class, 'deleteComment'])->name('client.deleteComment');
+Route::post('/posts/{post}/like&user_id', [PostController::class, 'like'])->name('posts.like');

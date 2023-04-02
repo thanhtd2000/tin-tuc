@@ -1,5 +1,6 @@
 <nav class="navbar">
-    <div class="nav-left"><img class="logo" src="../../../client/images/logo.png" alt="">
+    <div class="nav-left"><a href="{{ route('client.home') }}"><img class="logo" src="../../../client/images/logo.png"
+                alt=""></a>
         <ul class="navlogo">
             <li><img src="../../../client/images/notification.png"></li>
 
@@ -40,13 +41,15 @@
                 </div>
             </div>
             <hr>
-            <div class="user-profile">
-                <img src="../../../client/images/feedback.png" alt="">
-                <div>
-                    <p> Give Feedback</p>
-                    <a href="#">Help us to improve</a>
+            @if (Auth::user()->role == 0 || Auth::user()->role == 3)
+                <div class="user-profile">
+                    <img src="../../../client/images/admin.jpg" alt="">
+                    <div>
+                        <p> Quản trị website</p>
+                        <a href="{{ route('admin.index') }}">Giúp quản lý website dễ dàng</a>
+                    </div>
                 </div>
-            </div>
+            @endif
             <hr>
             <div class="settings-links">
                 <img src="../../../client/images/setting.png" alt="" class="settings-icon">
@@ -76,7 +79,8 @@
 <!-- content-area------------ -->
 
 <div class="container-fluild">
-    <div class="left-sidebar">
+    <div class="left-sidebar border-top">
+        <p class="fs-4 mt-2 mb-2">Danh mục</p>
         <div class="important-links">
             @foreach ($categories as $category)
                 <a href="{{ route('client.showCategory', $category->id) }}"><img src="/{{ $category->image }}"
@@ -86,12 +90,14 @@
         </div>
 
         <div class="shortcut-links">
-            <p>Your Shortcuts</p>
-            <a href="#"> <img src="../../../client/images/shortcut-1.png" alt="">Web Developers</a>
-            <a href="#"> <img src="../../../client/images/shortcut-2.png" alt="">Web Design Course</a>
-            <a href="#"> <img src="../../../client/images/shortcut-3.png" alt="">Full Stack
-                Development</a>
-            <a href="#"> <img src="../../../client/images/shortcut-4.png" alt="">Website Experts</a>
+            <p class="fs-4 mt-2 mb-2">Bài viết nổi bật</p>
+            @foreach ($top_posts_outstanding as $item)
+                <div>
+                    <a href="{{ route('client.postDetail', $item->id) }}"> <img src="../../../{{ $item->image }}"
+                            alt="">{{ $item->title }}</a>
+                </div>
+            @endforeach
+
         </div>
     </div>
 
@@ -99,7 +105,9 @@
 
 
     <div class="content-area">
-        @yield('story')
+        @if (Auth::check())
+            @yield('story')
+        @endif
         @yield('add-post')
         @yield('content')
     </div>
@@ -120,7 +128,7 @@
                     </div>
                     <div class="text-right">
                         <a href="{{ route('client.postDetail', $item->id) }}">
-                            <p>
+                            <p class="text-danger">
                                 << Xem thêm>>
                             </p>
                         </a>

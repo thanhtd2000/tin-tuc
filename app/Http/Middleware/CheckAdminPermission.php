@@ -18,9 +18,10 @@ class CheckAdminPermission
     {
         if (Auth::check() && Auth::user()->role == 0) {
             return $next($request);
-        } else if (Auth::check() &&Auth::user()->role == 2) {
+        } else if (Auth::check() && Auth::user()->role == 2) {
             Auth::logout();
-            return redirect('/login')->with('message', 'Tài khoản đã bị khoá');
+            return redirect()->route('login')->with('message', 'Tài khoản đã bị khoá không thể sử dụng các tính năng của website , hãy liên hệ
+            admin để nhận trợ giúp');
         } else if (Auth::check()) {
             return redirect('/');
         } else {

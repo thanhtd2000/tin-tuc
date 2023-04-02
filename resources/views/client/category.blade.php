@@ -17,21 +17,35 @@
                 </div>
             </div>
             <div class="status-field">
-                <h3>{{ $item->title }}... <a href="{{ route('client.postDetail', $item->id) }}">Xem thêm</a></h3>
+                <h3>{{ $item->title }}... <a href="{{ route('client.postDetail', $item->id) }}">
+                        <p class="text-danger">Xem thêm</p>
+                    </a></h3>
                 <img src="../../../{{ $item->image }}" alt="">
 
             </div>
             <div class="post-reaction">
                 <div class="activity-icons">
-                    <div><img src="../../../client/images/like-blue.png" alt="">120</div>
-                    <div><img src="../../../client/images/comments.png" alt="">52</div>
-                    <div><img src="../../../client/images/share.png" alt="">35</div>
-                </div>
-                <div class="post-profile-picture">
-                    <img src="../../../client/images/profile-pic.png " alt=""> <i class=" fas fa-caret-down"></i>
+
+                    @if (Auth::check())
+                        <div>
+                            <form action="{{ route('posts.like', $item) }}" method="post">
+                                @csrf
+                                <button type="submit" class="btn btn-link">
+                                    <i class="fa fa-heart{{ Auth::user()->hasLikedPost($item) ? '' : '-o' }}"></i>
+                                    {{ $item->likesCount() }}
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                    <div><img src="../../../client/images/comments.png"
+                            alt="">{{ DB::table('comments')->Where('post_id', $item->id)->count() }}</div>
+                    <div><a
+                            href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('client.postDetail', $item->id)) }}"><img
+                                src="../../../client/images/share.png" alt=""></a></div>
                 </div>
             </div>
         </div>
     @endforeach
-    <button type="button" class="btn-LoadMore" onclick="LoadMoreToggle()">Load More</button>
+    {{-- {{ $posts->links() }} --}}
+    {{-- <button type="button" class="btn-LoadMore" onclick="LoadMoreToggle()">Load More</button> --}}
 @endsection

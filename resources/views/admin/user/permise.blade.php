@@ -37,13 +37,17 @@
                             <button type="button" class="btn btn-success"><a onclick=" return confirm('Bạn có chắc chắn?')"
                                     href="{{ route('users.permise1', ['id' => $us->id, 'stt' => 3]) }}">Kiểm
                                     duyệt</a></button>
-                            <button type="button" class="btn btn-danger"><a
-                                    onclick=" return confirm('Bạn có chắc chắn block?')"
-                                    href="{{ route('users.permise1', ['id' => $us->id, 'stt' => 2]) }}">Block</a></button>
-                            <button type="button" class="btn btn-info"><a
-                                    onclick=" return confirm('Bạn có chắc chắn block?')"
-                                    href="{{ route('users.permise1', ['id' => $us->id, 'stt' => 1]) }}">Thành
-                                    viên</a></button>
+                            @if ($us->role == 1)
+                                <button type="button" class="btn btn-danger"><a
+                                        onclick=" return confirm('Bạn có chắc chắn block?')"
+                                        href="{{ route('users.permise1', ['id' => $us->id, 'stt' => 2]) }}">Block</a></button>
+                            @endif
+                            @if ($us->role == 2)
+                                <button type="button" class="btn btn-info"><a
+                                        onclick=" return confirm('Bạn có chắc chắn block?')"
+                                        href="{{ route('users.permise1', ['id' => $us->id, 'stt' => 1]) }}">Thành
+                                        viên</a></button>
+                            @endif
                         @endif
                     </td>
                 </tr>

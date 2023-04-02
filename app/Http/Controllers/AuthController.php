@@ -19,6 +19,7 @@ class AuthController extends Controller
 
     public function getLogin()
     {
+        session()->put('previousUrl', url()->previous());
         return view('login');
     }
     public function getSignup()
@@ -66,13 +67,16 @@ class AuthController extends Controller
                 $user->remember_token = null;
                 $user->update();
             }
-            if (Auth::user()->role == 0) {
+            if (Auth::user()->role == 0 || Auth::user()->role == 3) {
                 return redirect('admin/index')->with('message', 'Đăng nhập thành công');
             } else if (Auth::user()->role == 2) {
                 Auth::logout();
-                return redirect('/')->with('message', 'Tài khoản đã bị khoá');
+                return redirect('/')->with('message', 'Tài khoản đã bị khoá không thể sử dụng các tính năng của website , hãy liên hệ
+                admin để nhận trợ giúp');
             } else {
-                return redirect('/');
+                $previousUrl = session()->get('previousUrl', '/');
+                session()->forget('previousUrl');
+                return redirect()->intended($previousUrl);
             }
         } else {
             return redirect()->route('login')->with('message', 'Tài khoản hoặc mật khẩu không chính xác');
@@ -130,13 +134,13 @@ class AuthController extends Controller
         ];
         $messages = [
             'required' => 'Trường bắt buộc phải nhập',
-            'confirmed' => 'Mật khẩu phải giống nhau',
+            'confirmed' => 'Mật khẩu phải giống nhau'
         ];
         $request->validate($rule, $messages);
         $token = PasswordReset::where('email', $request->email)
             ->where('token', $request->code)
             ->first();
-        
+
         if ($token == null) {
             return redirect()->route('checkcode', ['email' => $request->email])->with('message', 'Mã xác thực sai');
         } else {

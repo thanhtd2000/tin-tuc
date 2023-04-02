@@ -17,21 +17,16 @@ function LoadMoreToggle() {
     LoadMoreBackground.classList.toggle("loadMoreToggle");
 };
 ////// add post user
-var add_post = document.getElementById('add_post');
 
-var post_an_article = document.getElementById('post_an_article');
-var cancel_post = document.getElementById('cancel_post');
-add_post.addEventListener("click", function () {
-    add_post.style.display = 'none';
-    post_an_article.style.display = 'block';
-})
-cancel_post.addEventListener("click", function () {
-    add_post.style.display = 'block';
-    post_an_article.style.display = 'none';
-})
 //// comment
-const myButton = document.querySelector('#myButton');
+// Lắng nghe sự kiện click vào thẻ có class "reply_comment"
+// $(document).ready(function () {
+//     $(".reply_comment").click(function (event) {
+//         event.preventDefault();
+//         $(this).parents(".voting-icons").siblings(".reply_comment_form").show();
+//     });
 
-myButton.addEventListener('click', () => {
-    console.log('Button clicked!');
-});
+//     $(".reply_comment_complete").click(function () {
+//         $(this).parents(".reply_comment_form").hide();
+//     });
+// });

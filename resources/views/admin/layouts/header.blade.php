@@ -115,7 +115,7 @@
                         <use xlink:href="../../../dist/vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
                     </svg> Bình luận</a>
                 <ul class="nav-group-items">
-                    <li class="nav-item"><a class="nav-link" href="notifications/badge.html"><span
+                    <li class="nav-item"><a class="nav-link" href="{{route('comments.index')}}"><span
                                 class="nav-icon"></span>
                             Danh sách</a></li>
                 </ul>
