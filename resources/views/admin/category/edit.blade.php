@@ -2,7 +2,7 @@
 @extends('admin.layouts.master')
 @extends('admin.layouts.header')
 @section('content')
-    <form class="col-md-6" action="{{ route('category-update') }}" method="POST">
+    <form class="col-md-6" action="{{ route('category-update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <input type="hidden" name="id" value="{{ $category->id }}">

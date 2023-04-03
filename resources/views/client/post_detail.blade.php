@@ -2,8 +2,20 @@
 @extends('client.layouts.master')
 @extends('client.layouts.header')
 @section('content')
+    <div class="user-profile-box">
+        <div class="user-profile mb-3">
+            <img src="../../../uploads/{{ $post_id->user->avatar }}" alt="">
+            <div>
+                <p>{{ $post_id->user->name }}</p>
+                <small>{{ $post_id->created_at }}</small>
+            </div>
+        </div>
+        <div>
+            <a href="#"><i class="fas fa-ellipsis-v"></i></a>
+        </div>
+    </div>
     <div>
-        <h1 class="fs-1 m-3">{!! $post_id->title !!}</h1>
+        <h1 class="fs-1 mb-3">{!! $post_id->title !!}</h1>
         <div class="content-post">
             <p>{!! $post_id->content !!}</p>
         </div>
@@ -55,8 +67,12 @@
                                     <div class="comment-text-sm"><span>{{ $comment->content }}.</span>
                                         <div class="reply-section">
                                             <div class="d-flex flex-row align-items-center voting-icons">
-                                                <i class="fa fa-sort-up fa-2x mt-3 hit-voting"></i>
-                                                <i class="fa fa-sort-down fa-2x mb-3 hit-voting"></i><span
+                                                {{-- <button type="submit" style="display: none"
+                                                    id="hide_reply{{ $key + 1 }}"><i
+                                                        class="fa fa-sort-up fa-2x mt-3 hit-voting"></i></button> --}}
+                                                <button type="submit" onclick="toggleElement{{ $key + 1 }}()"><i
+                                                        class="fa fa-sort-down fa-2x mb-3 hit-voting"></i></button>
+                                                <span
                                                     class="ml-2">{{ DB::table('comments')->Where('parent_id', $comment->id)->count() }}</span><span
                                                     class="dot ml-2"></span>
                                                 @if (Auth::user()->role == 0 || Auth::user()->role == $comment->user->role)
@@ -64,9 +80,8 @@
                                                         <button onclick=" return confirm('Bạn có chắc chắn xoá?')"
                                                             class="btn  bg-danger btn-success mr-3"
                                                             type="submit">xóa</button>
-                                                        <button onclick=" return confirm('Bạn có chắc chắn xoá?')"
-                                                            class="btn  bg-warning btn-success mr-3"
-                                                            type="submit">sửa</button>
+
+
                                                     </a>
                                                 @endif
                                                 <div id="replycmt{{ $key + 1 }}">
@@ -97,71 +112,111 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @foreach ($comments as $key => $value)
-                                        @if ($value->parent_id == $comment->id)
-                                            <div class="cmt-child ml-3 mt-2">
-                                                <div class="d-flex flex-row align-items-center commented-user ml-5">
-                                                    <img style="border-radius: 50%" class="rounded-circle"
-                                                        src="../../../uploads/{{ $value->user->avatar }}" width="20">
-                                                    <h5 class="mr-2">{{ $value->User->name }}</h5><span
-                                                        class="dot mb-1"></span><span
-                                                        class="mb-1 ml-2">{{ $value->created_at }}</span>
-                                                </div>
-                                                <div class="d-flex">
-                                                    <div class="comment-text-sm ml-4 align-items-center">
-                                                        <span>{{ $value->content }}.</span>
-
+                                    <div id="cmt_child{{ $key + 1 }}" style="display: none">
+                                        @foreach ($comments as $key => $value)
+                                            @if ($value->parent_id == $comment->id)
+                                                <div class="cmt-child ml-3 mt-2">
+                                                    <div class="d-flex flex-row align-items-center commented-user ml-5">
+                                                        <img style="border-radius: 50%" class="rounded-circle"
+                                                            src="../../../uploads/{{ $value->user->avatar }}"
+                                                            width="20">
+                                                        <h5 class="mr-2">{{ $value->User->name }}</h5><span
+                                                            class="dot mb-1"></span><span
+                                                            class="mb-1 ml-2">{{ $value->created_at }}</span>
                                                     </div>
-                                                    <div class="reply-section pt-0">
-                                                        <div class="  ">
-                                                            @if (Auth::user()->role == 0 || Auth::user()->role == $value->user->role)
-                                                                <a href="{{ route('client.deleteComment', $value->id) }}">
-                                                                    <button
-                                                                        onclick=" return confirm('Bạn có chắc chắn xoá?')"
-                                                                        class="btn border-0  bg-light text-danger btn-success mr-3"
-                                                                        type="submit">Xóa</button>
-                                                                    <button
-                                                                        onclick=" return confirm('Bạn có chắc chắn xoá?')"
-                                                                        class="btn text-warning bg-light btn-success mr-3"
-                                                                        type="submit">sửa</button>
-                                                                </a>
-                                                            @endif
+                                                    <div class="d-flex">
+                                                        <div class="comment-text-sm ml-4 align-items-center">
+                                                            <span>{{ $value->content }}.</span>
+
+                                                        </div>
+                                                        <div class="reply-section pt-0">
+                                                            <div class="  ">
+                                                                @if (Auth::user()->role == 0 || Auth::user()->role == $value->user->role)
+                                                                    <a
+                                                                        href="{{ route('client.deleteComment', $value->id) }}">
+                                                                        <button
+                                                                            onclick=" return confirm('Bạn có chắc chắn xoá?')"
+                                                                            class="btn border-0  bg-light text-danger btn-success mr-3"
+                                                                            type="submit">Xóa</button>
+                                                                    </a>
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
-
-                                            </div>
-                                        @endif
-                                    @endforeach
-
-
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
                         @endforeach
                     </div>
+                    {{-- điều kiện k login --}}
+                @else
+                    <div class="container border-top mt-5 mb-5">
+                        <div class="d-flex justify-content-center row">
+                            @foreach ($comments as $key => $comment)
+                                @if ($comment->parent_id == 0)
+                                    <div class="commented-section rounded bg-light mt-2">
+                                        <div class="d-flex flex-row align-items-center commented-user">
+                                            <img style="border-radius: 50%" class="rounded-circle"
+                                                src="../../../uploads/{{ $comment->user->avatar }}" width="30">
+                                            <h5 class="mr-2">{{ $comment->User->name }}</h5><span
+                                                class="dot mb-1"></span><span
+                                                class="mb-1 ml-2">{{ $comment->created_at }}</span>
+                                        </div>
+                                        <div class="comment-text-sm"><span>{{ $comment->content }}.</span>
+                                            <div class="reply-section">
+                                                <div class="d-flex flex-row align-items-center voting-icons">
 
+                                                    <button type="submit"
+                                                        onclick="toggleElement{{ $key + 1 }}()"><i
+                                                            class="fa fa-sort-down fa-2x mb-3 hit-voting"></i></button>
+                                                    <span
+                                                        class="ml-2">{{ DB::table('comments')->Where('parent_id', $comment->id)->count() }}</span><span
+                                                        class="dot ml-2"></span>
 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="cmt_child{{ $key + 1 }}" style="display: none">
+                                            @foreach ($comments as $key => $value)
+                                                @if ($value->parent_id == $comment->id)
+                                                    <div class="cmt-child ml-3 mt-2">
+                                                        <div
+                                                            class="d-flex flex-row align-items-center commented-user ml-5">
+                                                            <img style="border-radius: 50%" class="rounded-circle"
+                                                                src="../../../uploads/{{ $value->user->avatar }}"
+                                                                width="20">
+                                                            <h5 class="mr-2">{{ $value->User->name }}</h5><span
+                                                                class="dot mb-1"></span><span
+                                                                class="mb-1 ml-2">{{ $value->created_at }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="comment-text-sm ml-4 align-items-center">
+                                                                <span>{{ $value->content }}.</span>
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                    <h4 class="text-danger mt-4"> Bạn cần đăng nhập để đăng bài <a class="text-primary"
+                            href="{{ route('login') }}">Đăng
+                            nhập</a></h4>
+                @endif
             </div>
         </div>
     </div>
-@else
-    <h3 class="fs-3 fw-bolder">Comment</h3>
-    @foreach ($comments as $comment)
-        <div class="commented-section rounded bg-light mt-2">
-            <div class="d-flex flex-row align-items-center commented-user">
-                <img style="border-radius: 50%" class="rounded-circle"
-                    src="../../../uploads/{{ $comment->user->avatar }}" width="30">
-                <h5 class="mr-2">{{ $comment->User->name }}</h5><span class="dot mb-1"></span><span
-                    class="mb-1 ml-2">{{ $comment->created_at }}</span>
-            </div>
 
-            <div class="comment-text-sm"><span>{{ $comment->content }}.</span>
-            </div>
-
-        </div>
-    @endforeach
-    <h4 class="text-danger"> Bạn cần đăng nhập để đăng bài<a href="{{ route('login') }}">Đăng nhập</a></h4>
-    @endif
 
     <script>
         @foreach ($comments as $key => $comment)
@@ -172,7 +227,17 @@
                 replyForm{{ $key + 1 }}.style.display = 'block';
                 reply_button{{ $key + 1 }}.style.display = 'none';
             });
-        @endforeach
+        @endforeach ;
+        @foreach ($comments as $key => $comment)
+            function toggleElement{{ $key + 1 }}() {
+                var element{{ $key + 1 }} = document.getElementById("cmt_child{{ $key + 1 }}");
+                if (element{{ $key + 1 }}.style.display == "none") {
+                    element{{ $key + 1 }}.style.display = "block";
+                } else {
+                    element{{ $key + 1 }}.style.display = "none";
+                }
+            }
+        @endforeach ;
     </script>
 
 @endsection

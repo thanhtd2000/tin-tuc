@@ -2,9 +2,26 @@
     <div class="nav-left"><a href="{{ route('client.home') }}"><img class="logo" src="../../../client/images/logo.png"
                 alt=""></a>
         <ul class="navlogo">
-            <li><img src="../../../client/images/notification.png"></li>
-
+            <li><button><img src="../../../client/images/notification.png"></button></li>
         </ul>
+    </div>
+    <div class="pages">
+        <div class="d-flex justify-content-between">
+            <ul class="list-unstyled mb-0">
+                @if (Auth::check())
+                    <li><a href="{{ route('client.postCreated') }}">
+                            <p>Các bài viết đã tạo</p>
+                        </a></li>
+                @endif
+
+                <li><a href="">
+                        <p>Liên hệ</p>
+                    </a></li>
+                <li><a href="">
+                        <p>Giới thiệu</p>
+                    </a></li>
+            </ul>
+        </div>
     </div>
     <div class="nav-right">
         <div class="search-box">
@@ -53,18 +70,7 @@
             <hr>
             <div class="settings-links">
                 <img src="../../../client/images/setting.png" alt="" class="settings-icon">
-                <a href="#">Settings & Privary <img src="../../../client/images/arrow.png" alt=""></a>
-            </div>
-
-            <div class="settings-links">
-                <img src="../../../client/images/help.png" alt="" class="settings-icon">
-                <a href="#">Help & Support <img src="../../../client/images/arrow.png" alt=""></a>
-            </div>
-
-            <div class="settings-links">
-                <img src="../../../client/images/Display.png" alt="" class="settings-icon">
-                <a href="#">Display & Accessibility <img src="../../../client/images/arrow.png"
-                        alt=""></a>
+                <a href="#">Lên đầu trang <img src="../../../client/images/arrow.png" alt=""></a>
             </div>
 
             <div class="settings-links">
@@ -79,15 +85,21 @@
 <!-- content-area------------ -->
 
 <div class="container-fluild">
+
+
     <div class="left-sidebar border-top">
-        <p class="fs-4 mt-2 mb-2">Danh mục</p>
-        <div class="important-links">
-            @foreach ($categories as $category)
-                <a href="{{ route('client.showCategory', $category->id) }}"><img src="/{{ $category->image }}"
-                        alt="">{{ $category->category_name }}</a>
-            @endforeach
-            <a href="#">See More</a>
+
+        <div>
+            <p class="fs-4 mt-2 mb-2">Danh mục</p>
+            <div class="important-links">
+                @foreach ($categories as $category)
+                    <a href="{{ route('client.showCategory', $category->id) }}"><img src="/{{ $category->image }}"
+                            alt="">{{ $category->category_name }}</a>
+                @endforeach
+                <a href="#">See More</a>
+            </div>
         </div>
+
 
         <div class="shortcut-links">
             <p class="fs-4 mt-2 mb-2">Bài viết nổi bật</p>
@@ -115,11 +127,25 @@
 
     <!-- sidebar------------ -->
     <div class="right-sidebar">
-
         <div class="content-right">
-            <h3 class="fs-4 ">Tin mới</h3>
+            <div>
+                <hr>
+                <div class="heading-link">
+                    <h3 class="fs-4 py-2"> Top Thành Viên </h3>
+                </div>
+                @foreach ($top_users as $top)
+                    <div class="online-list">
+                        <div class="online">
+                            <img src="../../../uploads/{{ $top->user->avatar }}" alt="">
+                        </div>
+                        <p>{{ $top->user->name }}</p>
+                    </div>
+                @endforeach
+            </div>
+            <hr>
+            <h3 class="fs-4 pt-2">Tin mới</h3>
             @foreach ($latestPosts as $item)
-                <div class="post_new block-post-right  border w-100">
+                <div class="post_new block-post-right  border w-100 h-25">
                     <div>
                         <img src="../../../{{ $item->image }}" alt="">
                     </div>
@@ -136,32 +162,8 @@
                 </div>
             @endforeach
         </div>
-        <div class="advertisement">
-            <img src="../../../client/images/advertisement.png" class="advertisement-image" alt="">
-        </div>
 
-        <div class="heading-link">
-            <h3 class="fs-4 "> Top người dùng</h3>
-        </div>
 
-        <div class="online-list">
-            <div class="online">
-                <img src="../../../client/images/member-1.png" alt="">
-            </div>
-            <p>Alison Mina</p>
-        </div>
 
-        <div class="online-list">
-            <div class="online">
-                <img src="../../../client/images/member-2.png" alt="">
-            </div>
-            <p>Jackson Aston</p>
-        </div>
-        <div class="online-list">
-            <div class="online">
-                <img src="../../../client/images/member-3.png" alt="">
-            </div>
-            <p>Samona Rose</p>
-        </div>
     </div>
 </div>

@@ -4,27 +4,42 @@ namespace App\Http\Controllers\client;
 
 use Carbon\Carbon;
 use App\Models\Post;
-use App\Models\Category;
+use App\Models\User;
 use App\Models\Comment;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Mail\SendMailNotification;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SendMailNotification;
 
 class HomeController extends Controller
 {
     public $latestPosts;
     public $categories;
     public $top_posts_outstanding;
+    public $top_users;
+    public $data;
     public function __construct()
     {
         $this->categories = Category::all();
-        $this->latestPosts = Post::latest()->take(5)->get();
+        $this->latestPosts = Post::latest()->take(3)->get();
         $this->top_posts_outstanding = Post::withCount('comments')
             ->orderBy('comments_count', 'desc')
             ->take(5)
             ->get();
+        $this->top_users = Post::select('user_id', DB::raw('count(*) as total'))
+            ->groupBy('user_id')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+        $this->data = [
+            'top_users' => $this->top_users,
+            'categories' => $this->categories,
+            'top_posts_outstanding' => $this->top_posts_outstanding,
+            'latestPosts' => $this->latestPosts,
+        ];
     }
     //
     public function home()
@@ -33,20 +48,14 @@ class HomeController extends Controller
         //dd($this->top_posts_outstanding);
         return view('client.index', [
             'posts' => $posts,
-            'categories' => $this->categories,
-            'latestPosts' => $this->latestPosts,
-            'top_posts_outstanding' => $this->top_posts_outstanding,
-        ]);
+        ])->with($this->data);
     }
     public function index()
     {
         $posts2 = Post::latest()->take(5)->get();
         return view('client.index', [
             'posts2' => $posts2,
-            'categories' => $this->categories,
-            'latestPosts' => $this->latestPosts,
-            'top_posts_outstanding' => $this->top_posts_outstanding,
-        ]);
+        ])->with($this->data);
     }
     // 
     public function showCategory(Request $request)
@@ -54,10 +63,7 @@ class HomeController extends Controller
         $posts = Post::where('categories_id', $request->id)->get();
         return view('client.category', [
             'posts' => $posts,
-            'categories' => $this->categories,
-            'latestPosts' => $this->latestPosts,
-            'top_posts_outstanding' => $this->top_posts_outstanding,
-        ]);
+        ])->with($this->data);
     }
     public function showPostDetail(Request $request)
     {
@@ -65,14 +71,10 @@ class HomeController extends Controller
         $comments = Comment::where('post_id', $request->id)
             ->with('user')
             ->get();
-
         return view('client.post_detail', [
             'post_id' => $post_id,
-            'categories' => $this->categories,
-            'latestPosts' => $this->latestPosts,
             'comments' => $comments,
-            'top_posts_outstanding' => $this->top_posts_outstanding,
-        ]);
+        ])->with($this->data);
     }
     public function searchPost(Request $request)
     {
@@ -81,11 +83,8 @@ class HomeController extends Controller
             ->orWhere('content', 'like', '%' . $query . '%')
             ->paginate(5);
         return view('client.search_post', [
-            'categories' => $this->categories,
             'search_posts' => $search_posts,
-            'top_posts_outstanding' => $this->top_posts_outstanding,
-            'latestPosts' => $this->latestPosts,
-        ]);
+        ])->with($this->data);
     }
     public function store(Request $request)
     {
@@ -158,5 +157,59 @@ class HomeController extends Controller
             return back()->with('message', 'Xóa bình luận thành công');
         }
         return back()->with('message', 'Không tìm thấy bình luận');
+    }
+    public function showPostCreated()
+    {
+
+        $postCreateds  = Post::Where('user_id', Auth::user()->id)->get();
+        return view('client.showPostCreated', [
+            'postCreateds' => $postCreateds,
+        ])->with($this->data);
+    }
+    public function editPostCreated(Request $request)
+    {
+
+        $post_created  = Post::find($request->id);
+        return view('client.editPostCreated', [
+            'post_created' => $post_created,
+        ])->with($this->data);
+    }
+    public function updatePostCreated(Request $request)
+    {
+        $rule = [
+            'title' => 'required',
+            'content' => 'required',
+            'user_id' => 'required',
+            'categories_id' => 'required',
+            'id' => 'required',
+        ];
+        $message = [
+            'required' => 'Trường bắt buộc phải nhập'
+        ];
+
+        $post = $request->validate($rule, $message);
+        $pt = Post::find($post['id']);
+        if ($request->hasFile('image')) {
+            $file = $request->image;
+            $fileName = $file->getClientOriginalName();
+            $path = 'uploads/posts/';
+            $file->move($path, $fileName);
+            $pt->image = $path . $fileName;
+        }
+        $pt->title = $post['title'];
+        $pt->content = $post['content'];
+        $pt->user_id = $post['user_id'];
+        $pt->categories_id = $post['categories_id'];
+        $pt->created_at = Carbon::now();
+        $pt->save();
+        return redirect()->route('client.postCreated')->with('message', 'Sửa bài viết thành công');
+    }
+    public function deletePostCreated(Request $request)
+    {
+
+        $Post = Post::find($request->id);
+        if ($Post && $Post->delete()) {
+            return redirect()->route('client.postCreated')->with('message', 'Xóa bài viết thành công');
+        }
     }
 }

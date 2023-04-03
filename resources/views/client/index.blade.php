@@ -27,7 +27,7 @@
             @include('client.layouts.add-post-user')
         </div>
     @else
-        <h4 class="text-danger"> Bạn cần đăng nhập để đăng bài<a href="{{ route('login') }}">Đăng nhập</a></h4>
+        <h4 class="text-danger"> Bạn cần đăng nhập để đăng bài <a class="text-primary" href="{{ route('login') }}">Đăng nhập</a></h4>
     @endif
 
     @foreach ($posts as $item)
@@ -45,9 +45,10 @@
                 </div>
             </div>
             <div class="status-field">
-                <h3>{{ $item->title }}... <a href="{{ route('client.postDetail', $item->id) }}">
-                        <p class="text-danger">Xem thêm</p>
-                    </a></h3>
+                <h4 class="fs-2">{{ $item->title }}... </h4>
+                <a href="{{ route('client.postDetail', $item->id) }}">
+                    <p class="text-danger">Xem thêm</p>
+                </a>
                 <img src="../../../{{ $item->image }}" alt="">
 
             </div>
@@ -58,12 +59,17 @@
                         <div>
                             <form action="{{ route('posts.like', $item) }}" method="post">
                                 @csrf
-                                <button type="submit" class="btn btn-link">
+                                <button type="submit" class="btn btn-link like-button">
                                     <i class="fa fa-heart{{ Auth::user()->hasLikedPost($item) ? '' : '-o' }}"></i>
                                     {{ $item->likesCount() }}
                                 </button>
                             </form>
                         </div>
+                    @else
+                        <button type="submit" class="btn btn-link like-button">
+                            <i class="fa fa-heart"></i>
+                            {{ $item->likesCount() }}
+                        </button>
                     @endif
                     <div><img src="../../../client/images/comments.png"
                             alt="">{{ DB::table('comments')->Where('post_id', $item->id)->count() }}</div>

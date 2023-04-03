@@ -87,3 +87,7 @@ Route::post("/search-post", [HomeController::class, 'searchPost'])->name('client
 Route::post("/user-comment/{post_id}", [HomeController::class, 'storeComment'])->name('client.userComment');
 Route::get("/user-delete-comment/{id}", [HomeController::class, 'deleteComment'])->name('client.deleteComment');
 Route::post('/posts/{post}/like&user_id', [PostController::class, 'like'])->name('posts.like');
+Route::get('/post-created', [HomeController::class, 'showPostCreated'])->name('client.postCreated');
+Route::get('/edit-post-created/{id}', [HomeController::class, 'editPostCreated'])->name('client.editPostCreated');
+Route::put('/edit-post-created/{id}', [HomeController::class, 'updatePostCreated'])->name('client.updatePostCreated');
+Route::get("/deletePostCreated/{id}", [HomeController::class, 'deletePostCreated'])->name('client.deletePostCreated');

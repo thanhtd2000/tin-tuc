@@ -11,7 +11,7 @@
             <div class="col-lg-8 border-bottom">
                 <p>{{ $search_post->title }}</p>
                 <a class="" href="{{ route('client.postDetail', $search_post->id) }}">
-                    <p>
+                    <p class="text-danger">
                         << Xem chi tiết>>
                     </p>
                 </a>

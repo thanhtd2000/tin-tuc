@@ -65,7 +65,22 @@ ul.navlogo li img {
     border-radius: 100%;
 }
 
+.navbar ul {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+}
 
+.navbar ul li {
+    margin-right: 20px;
+}
+
+.navbar ul li:last-child {
+    margin-right: 0;
+}
+li a{
+    color: white;
+}
 /* nav right */
 
 

@@ -17,9 +17,10 @@
                 </div>
             </div>
             <div class="status-field">
-                <h3>{{ $item->title }}... <a href="{{ route('client.postDetail', $item->id) }}">
-                        <p class="text-danger">Xem thêm</p>
-                    </a></h3>
+                <h4 class="fs-2">{{ $item->title }}... </h4>
+                <a href="{{ route('client.postDetail', $item->id) }}">
+                    <p class="text-danger">Xem thêm</p>
+                </a>
                 <img src="../../../{{ $item->image }}" alt="">
 
             </div>

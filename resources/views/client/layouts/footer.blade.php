@@ -1,5 +1,5 @@
 <footer id="footer">
-    <p>&copy; Copyright 2021 - Socialbook All Rights Reserved</p>
+    <p>&copy; Copyright 2023 - PHP3-Laravel All Rights Reserved</p>
 </footer>
 
 <script src="../../../client/function.js"></script>

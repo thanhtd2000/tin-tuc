@@ -68,6 +68,7 @@ class CategoryController extends Controller
             'required' => 'Trường bắt buộc phải nhập'
         ];
         $category = $request->validate($rule, $message);
+        $cate = Category::find($category['id']);
         if ($request->hasFile('image')) {
             $file = $request->image;
             $fileName = $file->getClientOriginalName();
@@ -76,8 +77,7 @@ class CategoryController extends Controller
             $cate = Category::find($category['id']);
             $cate->image = $path . $fileName;
         }
-        $category = $request->validate($rule, $message);
-        $cate = Category::find($category['id']);
+       
         $cate->category_name = $category['name'];
         $cate->updated_at = Carbon::now();
 
