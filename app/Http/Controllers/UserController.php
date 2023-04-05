@@ -93,23 +93,21 @@ class UserController extends Controller
 
         $user = User::find($request->id);
         $newUser = $request;
+        if ($request->password) {
+            $user->password = bcrypt($newUser['password']);
+        }
         if ($request->hasFile('avatar')) {
             $file = $request->avatar;
             $fileExtension = $file->getClientOriginalExtension();
             $file->move("uploads", $request->email . "." . $fileExtension);
             $user->avatar = $newUser['email'] . "." . $fileExtension;
-            $user->name = $newUser['name'];
-            $user->email = $newUser['email'];
-            $user->role = $newUser['role'];
-            $user->password = bcrypt($newUser['password']);
-            $user->save();
-        } else {
-            $user->name = $newUser['name'];
-            $user->email = $newUser['email'];
-            $user->role = $newUser['role'];
-            $user->password = bcrypt($newUser['password']);
-            $user->save();
         }
+
+        $user->name = $newUser['name'];
+        $user->email = $newUser['email'];
+        $user->role = $newUser['role'];
+        $user->save();
+
 
         return redirect()->route('users.show')->with('message', 'Đã Sửa mới thành công');
     }

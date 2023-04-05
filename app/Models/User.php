@@ -3,10 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Notify;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -48,11 +49,15 @@ class User extends Authenticatable
     ];
     public function Post()
     {
-        return $this->hasManyThrough(Post::class, 'user_id');
+        return $this->hasMany(Post::class, 'user_id');
     }
     public function comments()
     {
         return $this->hasMany(Comment::class, 'user_id');
+    }
+    public function notify()
+    {
+        return $this->hasMany(Notify::class, 'user_id');
     }
     public function likes()
     {

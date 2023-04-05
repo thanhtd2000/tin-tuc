@@ -6,7 +6,7 @@ function UserSettingToggle() {
 var notibtn = document.querySelector(".notibtn");
 
 function darkModeON() {
-    darkBtn.classList.toggle("dark-mode-on");
+    darkBtn.classList .toggle("dark-mode-on");
     document.body.classList.toggle("dark-theme");
 };
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\client;
 use Carbon\Carbon;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Notify;
 use App\Models\Comment;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\ProfileRequests;
 
 class HomeController extends Controller
 {
@@ -45,23 +47,28 @@ class HomeController extends Controller
     public function home()
     {
         $posts = Post::latest()->where('status', '!=', 0)->paginate(5);
-        //dd($this->top_posts_outstanding);
+
         return view('client.index', [
             'posts' => $posts,
+
         ])->with($this->data);
     }
     public function index()
     {
+
         $posts2 = Post::latest()->take(5)->get();
         return view('client.index', [
             'posts2' => $posts2,
+
         ])->with($this->data);
     }
     // 
     public function showCategory(Request $request)
     {
         $posts = Post::where('categories_id', $request->id)->get();
+
         return view('client.category', [
+
             'posts' => $posts,
         ])->with($this->data);
     }
@@ -71,7 +78,9 @@ class HomeController extends Controller
         $comments = Comment::where('post_id', $request->id)
             ->with('user')
             ->get();
+
         return view('client.post_detail', [
+
             'post_id' => $post_id,
             'comments' => $comments,
         ])->with($this->data);
@@ -82,7 +91,9 @@ class HomeController extends Controller
         $search_posts = Post::where('title', 'like', '%' . $query . '%')
             ->orWhere('content', 'like', '%' . $query . '%')
             ->paginate(5);
+
         return view('client.search_post', [
+
             'search_posts' => $search_posts,
         ])->with($this->data);
     }
@@ -121,9 +132,6 @@ class HomeController extends Controller
     }
     public function storeComment(Request $request, $post_id)
     {
-        //$emailUserPost = Post::find($post_id)->user->email;
-
-
         $cmt = new Comment();
         $cmt->content = $request['content_comment'];
         $cmt->user_id = $request['user_id'];
@@ -138,12 +146,21 @@ class HomeController extends Controller
         $cmt->save();
         if (Post::find($post_id)) {
             $emailUser = Post::find($post_id)->user->email;
+            $User_id = Post::find($post_id)->user->id;
         } else if (Comment::Where('parent_id', $post_id)) {
             $emailUser = Comment::find($post_id)->user->email;
+            $User_id = Comment::find($post_id)->user->id;
         }
         $userName = Auth::user()->name;
         $linkPost = route('client.postDetail', $cmt->post_id);
         Mail::to($emailUser)->send(new SendMailNotification($userName, $cmt->content, $cmt->created_at, $linkPost));
+        $noti = new Notify();
+        $noti->userComment = $userName;
+        $noti->commentContent = $cmt->content;
+        $noti->dateComment = $cmt->created_at;
+        $noti->linkPost = $linkPost;
+        $noti->user_id = $User_id;
+        $noti->save();
         return back()->with('message', 'Thêm thành công');
     }
     public function deleteComment(Request $request)
@@ -162,7 +179,9 @@ class HomeController extends Controller
     {
 
         $postCreateds  = Post::Where('user_id', Auth::user()->id)->get();
+
         return view('client.showPostCreated', [
+
             'postCreateds' => $postCreateds,
         ])->with($this->data);
     }
@@ -171,6 +190,7 @@ class HomeController extends Controller
 
         $post_created  = Post::find($request->id);
         return view('client.editPostCreated', [
+
             'post_created' => $post_created,
         ])->with($this->data);
     }
@@ -211,5 +231,54 @@ class HomeController extends Controller
         if ($Post && $Post->delete()) {
             return redirect()->route('client.postCreated')->with('message', 'Xóa bài viết thành công');
         }
+    }
+    public function showProfile(Request $request)
+    {
+        $user_profile = User::find(Auth::user()->id);
+
+        return view('client.show_profile', compact('user_profile'));
+    }
+    public function editProfile(Request $request)
+    {
+        $user_profile = User::find($request->id);
+        return view('client.edit_profile', compact('user_profile'));
+    }
+    public function updateProfile(ProfileRequests $request)
+    {
+
+        $user = User::find($request->id);
+        $newUser = $request;
+        if ($request->password) {
+            $user->password = bcrypt($newUser['password']);
+        }
+        if ($request->hasFile('avatar')) {
+            $file = $request->avatar;
+            $fileExtension = $file->getClientOriginalExtension();
+            $file->move("uploads", $request->email . "." . $fileExtension);
+            $user->avatar = $newUser['email'] . "." . $fileExtension;
+        }
+
+        $user->name = $newUser['name'];
+        $user->email = $newUser['email'];
+        $user->role = $newUser['role'];
+        $user->save();
+
+
+        return redirect()->route('client.showProfile')->with('message', 'Đã cập nhật thành công');
+    }
+    public function updateNotification(Request $request)
+    {
+        $notify = Notify::find($request->id);
+        $notify->watched = 1;
+        $notify->save();
+        return redirect($notify->linkPost);
+    }
+    public function contact()
+    {
+        return view('client.contact')->with($this->data);
+    }
+    public function introduce()
+    {
+        return view('client.introduce')->with($this->data);
     }
 }

@@ -1,13 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\client\HomeController;
-use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashBoardController;
+use App\Http\Controllers\client\HomeController;
 
 
 /*
@@ -21,6 +23,9 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
+Route::get('clear-cache', function () {
+    $exitCode = Artisan::call('cache:clear');
+});
 Route::get("/", [HomeController::class, 'home'])->name('client.home');
 Route::get("/login", [AuthController::class, 'getLogin'])->name('login');
 Route::post("/login", [AuthController::class, 'checkLogin'])->name('checkLogin');
@@ -41,7 +46,7 @@ Route::post("/checkcode", [AuthController::class, 'checkcode'])->name('checkcode
 
 
 Route::middleware('checkAdmin')->prefix('admin')->group(function () {
-    Route::get("/index", [UserController::class, 'index'])->name('admin.index');
+    Route::get("/index", [DashBoardController::class, 'index'])->name('admin.index');
     Route::prefix('categories')->group(function () {
         Route::get("/index", [CategoryController::class, 'show']);
         Route::get("/create", [CategoryController::class, 'create']);
@@ -70,7 +75,7 @@ Route::middleware('checkAdmin')->prefix('admin')->group(function () {
         Route::get("/delete/{id}", [PostController::class, 'delete']);
         Route::get("/edit/{id}", [PostController::class, 'edit']);
         Route::put("/update", [PostController::class, 'update'])->name('posts.update');
-        Route::get("/update-stt/{id}", [PostController::class, 'updatestt'])->name('posts.updatestt');
+        Route::get("/update-stt/{id}&&{status}", [PostController::class, 'updatestt'])->name('posts.updatestt');
         Route::post("/index", [PostController::class, 'search'])->name('posts.search');
     });
     Route::prefix('comments')->group(function () {
@@ -91,3 +96,9 @@ Route::get('/post-created', [HomeController::class, 'showPostCreated'])->name('c
 Route::get('/edit-post-created/{id}', [HomeController::class, 'editPostCreated'])->name('client.editPostCreated');
 Route::put('/edit-post-created/{id}', [HomeController::class, 'updatePostCreated'])->name('client.updatePostCreated');
 Route::get("/deletePostCreated/{id}", [HomeController::class, 'deletePostCreated'])->name('client.deletePostCreated');
+Route::get("/show-profile", [HomeController::class, 'showProfile'])->name('client.showProfile');
+Route::get("/edit-profile/{id}", [HomeController::class, 'editProfile'])->name('client.editProfile');
+Route::post("/update-profile/{id}", [HomeController::class, 'updateProfile'])->name('client.updateProfile');
+Route::get("/update_stt/{id}", [HomeController::class, 'updateNotification'])->name('client.updateNotification');
+Route::get("/contact", [HomeController::class, 'contact'])->name('client.contact');
+Route::get("/gioi-thieu", [HomeController::class, 'introduce'])->name('client.introduce');

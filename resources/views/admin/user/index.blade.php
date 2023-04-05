@@ -42,9 +42,15 @@
                     <td>{{ $roles[$us->role] ?? '' }}</td>
                     <td><img src="../../../uploads/{{ $us->avatar }}" width="30px" alt=""></td>
                     <td>{{ $us->created_at }}</td>
-                    <td><button type="button" class="btn btn-success"><a href="edit/{{ $us->id }}">Sửa</a></button>
-                        <button type="button" class="btn btn-danger"><a onclick=" return confirm('Bạn có chắc chắn xoá?')"
-                                href="delete/{{ $us->id }}">Xoá</a></button>
+                    <td>
+                        @if (!$us->role == 0)
+                            <button type="button" class="btn btn-success"><a
+                                    href="edit/{{ $us->id }}">Sửa</a></button>
+                            <button type="button" class="btn btn-danger"><a
+                                    onclick=" return confirm('Bạn có chắc chắn xoá?')"
+                                    href="delete/{{ $us->id }}">Xoá</a></button>
+                        @endif
+
                     </td>
                 </tr>
             @endforeach

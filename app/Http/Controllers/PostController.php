@@ -115,7 +115,7 @@ class PostController extends Controller
     {
         $post = Post::find($request->id);
         if ($post) {
-            $post->status = 1;
+            $post->status = $request->status;
             $post->save();
             return redirect()->route('posts.show')->with('message', 'Update trạng thái thành công');
         }
@@ -134,6 +134,6 @@ class PostController extends Controller
             $like->delete();
         };
 
-        return back();
+        return redirect()->back();
     }
 }

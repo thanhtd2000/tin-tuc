@@ -9,6 +9,7 @@
     <meta name="author" content="Łukasz Holeczek">
     <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
     <title>Admin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
     <link rel="apple-touch-icon" sizes="57x57" href="../../../dist/assets/favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="../../../dist/assets/favicon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="../../../dist/assets/favicon/apple-icon-72x72.png">
@@ -35,7 +36,7 @@
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.css">
     <link href="../../../dist/css/examples.css" rel="stylesheet">
-    <link rel="shortcut icon" type="image/png" href="../../../client/images/icon-top-bar.jpg"/>
+    <link rel="shortcut icon" type="image/png" href="../../../client/images/icon-top-bar.jpg" />
     <!-- Global site tag (gtag.js) - Google Analytics-->
     <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-118965717-3"></script>
     <script>
@@ -56,10 +57,10 @@
 <body>
     <div class="sidebar sidebar-dark sidebar-fixed" id="sidebar">
         <div class="sidebar-brand d-none d-md-flex">
-            <a href="{{ route('client.home') }}"><svg class="sidebar-brand-full" width="118" height="46"
-                    alt="CoreUI Logo">
-                    <use xlink:href="../../../dist/assets/brand/coreui.svg#full"></use>
-                </svg></a>
+            <a href="{{ route('client.home') }}">
+                <img class="sidebar-brand-full" width="100" height="40" src="../../../img/logo chu.png"
+                    alt="">
+            </a>
             <svg class="sidebar-brand-narrow" width="46" height="46" alt="CoreUI Logo">
                 <use xlink:href="../../../dist/assets/brand/coreui.svg#signet"></use>
             </svg>
@@ -115,7 +116,7 @@
                         <use xlink:href="../../../dist/vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
                     </svg> Bình luận</a>
                 <ul class="nav-group-items">
-                    <li class="nav-item"><a class="nav-link" href="{{route('comments.index')}}"><span
+                    <li class="nav-item"><a class="nav-link" href="{{ route('comments.index') }}"><span
                                 class="nav-icon"></span>
                             Danh sách</a></li>
                 </ul>
@@ -175,7 +176,7 @@
                                 </svg> Comments<span class="badge badge-sm bg-warning ms-2">42</span></a>
                             <div class="dropdown-header bg-light py-2">
                                 <div class="fw-semibold">Settings</div>
-                            </div><a class="dropdown-item" href="#">
+                            </div><a class="dropdown-item" href="{{ route('client.showProfile') }}">
                                 <svg class="icon me-2">
                                     <use xlink:href="../../../dist/vendors/@coreui/icons/svg/free.svg#cil-user"></use>
                                 </svg> Profile</a><a class="dropdown-item" href="#">

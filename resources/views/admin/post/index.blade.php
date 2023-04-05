@@ -68,7 +68,14 @@
                         @if ($cate->status == 0)
                             <button type="button" class="btn btn-success"><a
                                     onclick=" return confirm('Bạn có chắc chắn công khai?')"
-                                    href="update-stt/{{ $cate->id }}">Công Khai</a></button>
+                                    href="{{ route('posts.updatestt', ['id' => $cate->id, 'status' => 1]) }}">Công
+                                    Khai</a></button>
+                        @endif
+                        @if ($cate->status == 1)
+                            <button type="button" class="btn btn-success"><a
+                                    onclick=" return confirm('Bạn có chắc chắn bỏ công khai?')"
+                                    href="{{ route('posts.updatestt', ['id' => $cate->id, 'status' => 0]) }}">Bỏ Công
+                                    Khai</a></button>
                         @endif
 
                     </td>

@@ -1,25 +1,46 @@
 <nav class="navbar">
     <div class="nav-left"><a href="{{ route('client.home') }}"><img class="logo" src="../../../client/images/logo.png"
                 alt=""></a>
-        <ul class="navlogo">
-            <li><button><img src="../../../client/images/notification.png"></button></li>
-        </ul>
+        @if (Auth::check())
+            <div class="dropdown">
+                <button type="button" class="position-relative">
+                    <img data-bs-toggle="dropdown" src="../../../client/images/notification.png">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ DB::table('notify')->where([['user_id', '=', Auth::user()->id], ['watched', '=', 0]])->count() }}
+                    </span>
+                    <ul class="dropdown-menu">
+                        @foreach ($notify = DB::table('notify')->where('user_id', Auth::user()->id)->latest()->take(5)->get() as $nt)
+                            <li @if ($nt->watched == 1) class="bg-info-subtle" @endif>
+                                <a class="dropdown-item"
+                                    href="{{ route('client.updateNotification', ['id' => $nt->id]) }}"><span
+                                        class="text-danger">{{ $nt->userComment }}</span> đã bình
+                                    luận
+                                    bài
+                                    viết <br> hoặc bình luận của bạn lúc {{ $nt->dateComment }}</a>
+                            </li>
+                        @endforeach
+
+
+                    </ul>
+                </button>
+
+            </div>
+        @endif
     </div>
     <div class="pages">
-        <div class="d-flex justify-content-between">
-            <ul class="list-unstyled mb-0">
+        <div class="">
+            <ul class="list-unstyled mb-0 flex justify-around">
                 @if (Auth::check())
-                    <li><a href="{{ route('client.postCreated') }}">
-                            <p>Các bài viết đã tạo</p>
-                        </a></li>
+                    <a href="{{ route('client.postCreated') }}">
+                        <li class="px-[10px] text-white">Các bài viết đã tạo</li>
+                    </a>
                 @endif
-
-                <li><a href="">
-                        <p>Liên hệ</p>
-                    </a></li>
-                <li><a href="">
-                        <p>Giới thiệu</p>
-                    </a></li>
+                <a href="{{ route('client.contact') }}">
+                    <li class="px-[10px] text-white">Liên hệ</li>
+                </a>
+                <a href="{{ route('client.introduce') }}">
+                    <li class="px-[10px] text-white">Giới thiệu</li>
+                </a>
             </ul>
         </div>
     </div>
@@ -49,7 +70,9 @@
                 <div class="user-profile">
                     <img src="../../../uploads/{{ Auth::user()->avatar }}" alt="">
                     <div>
-                        <p> {{ Auth::user()->name }}</p>
+                        <a href="{{ route('client.showProfile') }}">
+                            <p> {{ Auth::user()->name }}</p>
+                        </a>
                         <a href="#">See your profile</a>
                     </div>
                 </div>
