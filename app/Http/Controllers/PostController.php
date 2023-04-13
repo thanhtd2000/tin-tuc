@@ -7,6 +7,7 @@ use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +49,7 @@ class PostController extends Controller
         $post = $request->validate($rule, $message);
         if ($request->hasFile('image')) {
             $file = $request->image;
-            $fileName = $file->getClientOriginalName();
+            $fileName = Str::random(4) . $file->getClientOriginalName();
             $path = 'uploads/posts/';
             $file->move($path, $fileName);
             $pt = new Post();
@@ -98,7 +99,7 @@ class PostController extends Controller
         $pt = Post::find($post['id']);
         if ($request->hasFile('image')) {
             $file = $request->image;
-            $fileName = $file->getClientOriginalName();
+            $fileName = Str::random(4) . $file->getClientOriginalName();
             $path = 'uploads/posts/';
             $file->move($path, $fileName);
             $pt->image = $path . $fileName;
@@ -135,5 +136,13 @@ class PostController extends Controller
         };
 
         return redirect()->back();
+    }
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        Post::whereIn('id', $ids)->delete();
+
+        return redirect()->back()->with('message', 'Đã xoá ' . count($ids) . ' bài viết.');
     }
 }

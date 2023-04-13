@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
-    public function show()
+    public function index()
     {
         $categories = Category::all();
         return view('admin.category.index', compact('categories'));

@@ -35,24 +35,26 @@
         </thead>
         <tbody>
             @foreach ($user as $key => $us)
-                <tr>
-                    <th scope="row">{{ $key + 1 }}</th>
-                    <td>{{ $us->name }}</td>
-                    <td>{{ $us->email }}</td>
-                    <td>{{ $roles[$us->role] ?? '' }}</td>
-                    <td><img src="../../../uploads/{{ $us->avatar }}" width="30px" alt=""></td>
-                    <td>{{ $us->created_at }}</td>
-                    <td>
-                        @if (!$us->role == 0)
-                            <button type="button" class="btn btn-success"><a
-                                    href="edit/{{ $us->id }}">Sửa</a></button>
-                            <button type="button" class="btn btn-danger"><a
-                                    onclick=" return confirm('Bạn có chắc chắn xoá?')"
-                                    href="delete/{{ $us->id }}">Xoá</a></button>
-                        @endif
+                @if ($us->role != 0)
+                    <tr>
+                        <th scope="row">{{ $key + 1 }}</th>
+                        <td>{{ $us->name }}</td>
+                        <td>{{ $us->email }}</td>
+                        <td>{{ $roles[$us->role] ?? '' }}</td>
+                        <td><img src="../../../uploads/{{ $us->avatar }}" width="30px" alt=""></td>
+                        <td>{{ $us->created_at }}</td>
+                        <td>
+                            @if (!$us->role == 0 && $us->id != Auth::user()->id)
+                                <button type="button" class="btn btn-success"><a
+                                        href="edit/{{ $us->id }}">Sửa</a></button>
+                                <button type="button" class="btn btn-danger"><a
+                                        onclick=" return confirm('Bạn có chắc chắn xoá?')"
+                                        href="delete/{{ $us->id }}">Xoá</a></button>
+                            @endif
 
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                @endif
             @endforeach
         </tbody>
     </table>

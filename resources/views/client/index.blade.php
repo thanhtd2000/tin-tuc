@@ -5,6 +5,7 @@
     @include('client.layouts.story')
 @endsection
 @section('content')
+<meta property="og:image" content="{{asset('../../../client/images/logo.png')}}" />
     <div class="message text-center">
         @if (session('message'))
             <h4 class="aler alert-danger pt-3 pb-3">

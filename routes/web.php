@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
@@ -12,16 +11,7 @@ use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\client\HomeController;
 
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+
 
 Route::get('clear-cache', function () {
     $exitCode = Artisan::call('cache:clear');
@@ -48,7 +38,7 @@ Route::post("/checkcode", [AuthController::class, 'checkcode'])->name('checkcode
 Route::middleware('checkAdmin')->prefix('admin')->group(function () {
     Route::get("/index", [DashBoardController::class, 'index'])->name('admin.index');
     Route::prefix('categories')->group(function () {
-        Route::get("/index", [CategoryController::class, 'show']);
+        Route::get("/index", [CategoryController::class, 'index']);
         Route::get("/create", [CategoryController::class, 'create']);
         Route::post("/create", [CategoryController::class, 'store'])->name('category-create');
         Route::get("/delete/{id}", [CategoryController::class, 'delete']);
@@ -72,24 +62,27 @@ Route::middleware('checkAdmin')->prefix('admin')->group(function () {
         Route::get("/index", [PostController::class, 'show'])->name('posts.show');
         Route::get("/create", [PostController::class, 'create']);
         Route::post("/create", [PostController::class, 'store'])->name('post-create');
-        Route::get("/delete/{id}", [PostController::class, 'delete']);
-        Route::get("/edit/{id}", [PostController::class, 'edit']);
+        Route::get("/delete/{id}", [PostController::class, 'delete'])->name('delete-post')->middleware('CheckIsAdmin');
+        Route::get("/edit/{id}", [PostController::class, 'edit'])->name('posts.edit')->middleware('CheckIsAdmin');
         Route::put("/update", [PostController::class, 'update'])->name('posts.update');
         Route::get("/update-stt/{id}&&{status}", [PostController::class, 'updatestt'])->name('posts.updatestt');
         Route::post("/index", [PostController::class, 'search'])->name('posts.search');
+        Route::delete("/deleteMultiple", [PostController::class, 'deleteMultiple'])->name('delete.Mulposts')->middleware('CheckIsAdmin');
     });
     Route::prefix('comments')->group(function () {
         Route::get("/index", [CommentController::class, 'index'])->name('comments.index');
-        Route::get("/delete/{id}", [CommentController::class, 'delete']);
+        Route::get("/delete/{id}", [CommentController::class, 'delete'])->name('delete.comments')->middleware('CheckIsAdmin');
         Route::post("/index", [CommentController::class, 'search'])->name('comments.search');
+        Route::get("/update_stt/{id}&&{status}", [CommentController::class, 'update_stt'])->name('comments.update_stt');
+        Route::delete("/deleteMultiple", [CommentController::class, 'deleteMultiple'])->name('delete.Mulcomments')->middleware('CheckIsAdmin');
     });
 });
-///////////
+// home controller
 Route::post("/create", [HomeController::class, 'store'])->name('user_post');
 Route::get("/category/{id}", [HomeController::class, 'showCategory'])->name('client.showCategory');
 Route::get("/post-detail/{id}", [HomeController::class, 'showPostDetail'])->name('client.postDetail');
 Route::post("/search-post", [HomeController::class, 'searchPost'])->name('client.searchPost');
-Route::post("/user-comment/{post_id}", [HomeController::class, 'storeComment'])->name('client.userComment');
+Route::post("/user-comment", [HomeController::class, 'storeComment'])->name('client.userComment');
 Route::get("/user-delete-comment/{id}", [HomeController::class, 'deleteComment'])->name('client.deleteComment');
 Route::post('/posts/{post}/like&user_id', [PostController::class, 'like'])->name('posts.like');
 Route::get('/post-created', [HomeController::class, 'showPostCreated'])->name('client.postCreated');
@@ -102,3 +95,4 @@ Route::post("/update-profile/{id}", [HomeController::class, 'updateProfile'])->n
 Route::get("/update_stt/{id}", [HomeController::class, 'updateNotification'])->name('client.updateNotification');
 Route::get("/contact", [HomeController::class, 'contact'])->name('client.contact');
 Route::get("/gioi-thieu", [HomeController::class, 'introduce'])->name('client.introduce');
+Route::get("/update_all_stt/{user_id}", [HomeController::class, 'updateAllNotification'])->name('client.updateAllNotification');

@@ -74,9 +74,7 @@ class AuthController extends Controller
                 return redirect('/')->with('message', 'Tài khoản đã bị khoá không thể sử dụng các tính năng của website , hãy liên hệ
                 admin để nhận trợ giúp');
             } else {
-                $previousUrl = session()->get('previousUrl', '/');
-                session()->forget('previousUrl');
-                return redirect()->intended($previousUrl);
+                return redirect('/');
             }
         } else {
             return redirect()->route('login')->with('message', 'Tài khoản hoặc mật khẩu không chính xác');

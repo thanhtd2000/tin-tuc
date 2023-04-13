@@ -33,4 +33,20 @@ class CommentController extends Controller
             ->paginate(5);
         return view('admin.comment.index', compact('comments'));
     }
+    public function update_stt(Request $request)
+    {
+        $comment = Comment::find($request->id);
+        $comment->status = $request->status;
+        $comment->save();
+        return back()->with('Thao tác thành công');
+    }
+
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        Comment::whereIn('id', $ids)->delete();
+
+        return redirect()->back()->with('message', 'Đã xoá ' . count($ids) . ' bình luận.');
+    }
 }

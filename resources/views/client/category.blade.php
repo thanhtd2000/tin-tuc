@@ -2,6 +2,10 @@
 @extends('client.layouts.master')
 @extends('client.layouts.header')
 @section('content')
+    <div class="text-center text-danger">
+        <h3 class="fs-1 fst-"> Danh mục {{ $category_name }}</h3>
+    </div>
+
     @foreach ($posts as $item)
         <div class="status-field-container write-post-container">
             <div class="user-profile-box">
@@ -47,6 +51,5 @@
             </div>
         </div>
     @endforeach
-    {{-- {{ $posts->links() }} --}}
-    {{-- <button type="button" class="btn-LoadMore" onclick="LoadMoreToggle()">Load More</button> --}}
+    {{ $posts->links() }}
 @endsection

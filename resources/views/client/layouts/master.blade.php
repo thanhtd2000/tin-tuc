@@ -9,14 +9,22 @@
                         {{ DB::table('notify')->where([['user_id', '=', Auth::user()->id], ['watched', '=', 0]])->count() }}
                     </span>
                     <ul class="dropdown-menu">
+                        <a href="{{ route('client.updateAllNotification', ['user_id' => Auth::user()->id]) }}"
+                            class="text-primary">Đánh dấu tất cả đã đọc</a>
                         @foreach ($notify = DB::table('notify')->where('user_id', Auth::user()->id)->latest()->take(5)->get() as $nt)
                             <li @if ($nt->watched == 1) class="bg-info-subtle" @endif>
                                 <a class="dropdown-item"
                                     href="{{ route('client.updateNotification', ['id' => $nt->id]) }}"><span
-                                        class="text-danger">{{ $nt->userComment }}</span> đã bình
-                                    luận
-                                    bài
-                                    viết <br> hoặc bình luận của bạn lúc {{ $nt->dateComment }}</a>
+                                        class="text-danger">{{ $nt->userComment }}</span>
+                                    @if ($nt->reply == 0)
+                                        đã bình
+                                        luận
+                                        bài
+                                        viết
+                                    @else
+                                        trả lời bình luận
+                                    @endif <br> của bạn lúc {{ $nt->dateComment }}
+                                </a>
                             </li>
                         @endforeach
 
@@ -33,6 +41,10 @@
                 @if (Auth::check())
                     <a href="{{ route('client.postCreated') }}">
                         <li class="px-[10px] text-white">Các bài viết đã tạo</li>
+                    </a>
+
+                    <a href="{{ route('client.dashboard') }}">
+                        <li class="px-[10px] text-white">Thống kê xếp hạng</li>
                     </a>
                 @endif
                 <a href="{{ route('client.contact') }}">
@@ -114,12 +126,11 @@
 
         <div>
             <p class="fs-4 mt-2 mb-2">Danh mục</p>
-            <div class="important-links">
-                @foreach ($categories as $category)
+            <div class="important-links" id="category">
+                {{-- @foreach ($categories as $category)
                     <a href="{{ route('client.showCategory', $category->id) }}"><img src="/{{ $category->image }}"
                             alt="">{{ $category->category_name }}</a>
-                @endforeach
-                <a href="#">See More</a>
+                @endforeach --}}
             </div>
         </div>
 
@@ -185,8 +196,5 @@
                 </div>
             @endforeach
         </div>
-
-
-
     </div>
 </div>

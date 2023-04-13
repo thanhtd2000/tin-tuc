@@ -21,67 +21,87 @@
             </h4>
         @endif
     </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">STT</th>
-                <th scope="col">Tiêu đề</th>
-                <th scope="col">Nội dung</th>
-                <th scope="col">Trạng thái</th>
-                <th scope="col">Ảnh</th>
-                <th scope="col">Thời gian đăng</th>
-                <th scope="col">Thời gian sửa</th>
-                <th scope="col">Người đăng</th>
-                <th scope="col">Chuyên mục</th>
-                <th scope="col">Chức năng</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($posts as $key => $cate)
+    <form action="{{ route('delete.Mulposts') }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <table class="table">
+            <thead>
                 <tr>
-                    <th scope="row">{{ $key + 1 }}</th>
-                    <td>
-                        <p
-                            style=" white-space: nowrap;
+                    <th>Check</th>
+                    <th scope="col">STT</th>
+                    <th scope="col">Tiêu đề</th>
+                    <th scope="col">Nội dung</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Ảnh</th>
+                    <th scope="col">Thời gian đăng</th>
+                    <th scope="col">Thời gian sửa</th>
+                    <th scope="col">Người đăng</th>
+                    <th scope="col">Chuyên mục</th>
+                    <th scope="col">Chức năng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($posts as $key => $post)
+                    <tr>
+                        <th>
+                            @if ($post->user->role != 0 || $post->user->id == Auth::id())
+                                <input type="checkbox" name="ids[]" value="{{ $post->id }}">
+                            @else
+                                <h4 class="text-danger">ADMIN</h4>
+                            @endif
+                        </th>
+                        <th scope="row">{{ $key + 1 }}</th>
+                        <td>
+                            <p
+                                style=" white-space: nowrap;
                         width: 100px;
                         overflow: hidden;">
-                            {{ $cate->title }}</p>
-                    </td>
-                    <td>
-                        <p
-                            style=" white-space: nowrap;
+                                {{ $post->title }}</p>
+                        </td>
+                        <td>
+                            <p
+                                style=" white-space: nowrap;
                         width: 200px;
                         overflow: hidden;">
-                            {{ $cate->content }}</p>
-                    </td>
-                    <td>{{ $cate->status == 0 ? 'Đợi duyệt' : 'Đã duyệt' }}</td>
-                    <td><img src="../../{{ $cate->image }}" width="50px" alt=""></td>
-                    <td>{{ $cate->created_at }}</td>
-                    <td>{{ $cate->updated_at }}</td>
-                    <td>{{ $cate->user->name }}</td>
-                    <td>{{ $cate->Category->category_name }}</td>
-                    <td class="whitespace-nowrap">
-                        <button type="button" class="btn btn-success"><a href="edit/{{ $cate->id }}">Sửa</a></button>
-                        <button type="button" class="btn btn-danger"><a onclick=" return confirm('Bạn có chắc chắn xoá?')"
-                                href="delete/{{ $cate->id }}">Xoá</a></button>
+                                {{ $post->content }}</p>
+                        </td>
+                        <td>{{ $post->status == 0 ? 'Đợi duyệt' : 'Đã duyệt' }}</td>
+                        <td><img src="../../{{ $post->image }}" width="50px" alt=""></td>
+                        <td>{{ $post->created_at }}</td>
+                        <td>{{ $post->updated_at }}</td>
+                        <td>{{ $post->user->name }}</td>
+                        <td>{{ $post->Category->category_name }}</td>
+                        <td class="whitespace-nowrap">
+                            @if ($post->user->role != 0 || Auth::user()->id == $post->user->id)
+                                <button type="button" class="btn btn-success"><a
+                                        href="edit/{{ $post->id }}">Sửa</a></button>
+                                <button type="button" class="btn btn-danger"><a
+                                        onclick=" return confirm('Bạn có chắc chắn xoá?')"
+                                        href="delete/{{ $post->id }}">Xoá</a></button>
+                                @if ($post->status == 0)
+                                    <button type="button" class="btn btn-success"><a
+                                            onclick=" return confirm('Bạn có chắc chắn công khai?')"
+                                            href="{{ route('posts.updatestt', ['id' => $post->id, 'status' => 1]) }}">Công
+                                            Khai</a></button>
+                                @endif
+                                @if ($post->status == 1)
+                                    <button type="button" class="btn btn-success"><a
+                                            onclick=" return confirm('Bạn có chắc chắn bỏ công khai?')"
+                                            href="{{ route('posts.updatestt', ['id' => $post->id, 'status' => 0]) }}">Bỏ
+                                            Công
+                                            Khai</a></button>
+                                @endif
+                            @endif
 
-                        @if ($cate->status == 0)
-                            <button type="button" class="btn btn-success"><a
-                                    onclick=" return confirm('Bạn có chắc chắn công khai?')"
-                                    href="{{ route('posts.updatestt', ['id' => $cate->id, 'status' => 1]) }}">Công
-                                    Khai</a></button>
-                        @endif
-                        @if ($cate->status == 1)
-                            <button type="button" class="btn btn-success"><a
-                                    onclick=" return confirm('Bạn có chắc chắn bỏ công khai?')"
-                                    href="{{ route('posts.updatestt', ['id' => $cate->id, 'status' => 0]) }}">Bỏ Công
-                                    Khai</a></button>
-                        @endif
 
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table> <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xoá?')">Xoá
+            mục đã
+            chọn</button>
+    </form>
     {{ $posts->links() }}
 @endsection

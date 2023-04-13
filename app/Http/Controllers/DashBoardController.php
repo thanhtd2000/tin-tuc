@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
+use App\Http\Resources\UserResource;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
@@ -11,6 +13,7 @@ class DashBoardController extends Controller
 {
     public function index()
     {
+
         $users = User::withCount('Post')->orderBy('post_count', 'desc')->take(5)->get();
         $posts = Post::withCount('likes')->orderBy('likes_count', 'desc')->take(5)->get();
         $data = [];
