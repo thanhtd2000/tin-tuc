@@ -46,6 +46,7 @@
                                 src="/uploads/{{ Auth::user()->avatar }}" alt="avatar">
                             <form action="{{ route('client.userComment') }}" method="POST" class="w-100">
                                 @csrf
+                                <input type="hidden" name="reply" value="0">
                                 <input type="hidden" name="id" value="{{ $post_id->id }}">
                                 <input type="hidden" name="status"
                                     value="{{ Auth::user()->role == 0 || Auth::user()->role == 3 ? 1 : 0 }}">

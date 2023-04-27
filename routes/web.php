@@ -67,14 +67,14 @@ Route::middleware('checkAdmin')->prefix('admin')->group(function () {
         Route::put("/update", [PostController::class, 'update'])->name('posts.update');
         Route::get("/update-stt/{id}&&{status}", [PostController::class, 'updatestt'])->name('posts.updatestt');
         Route::post("/index", [PostController::class, 'search'])->name('posts.search');
-        Route::delete("/deleteMultiple", [PostController::class, 'deleteMultiple'])->name('delete.Mulposts')->middleware('CheckIsAdmin');
+        Route::delete("/deleteMultiple", [PostController::class, 'deleteMultiple'])->name('delete.Mulposts');
     });
     Route::prefix('comments')->group(function () {
         Route::get("/index", [CommentController::class, 'index'])->name('comments.index');
         Route::get("/delete/{id}", [CommentController::class, 'delete'])->name('delete.comments')->middleware('CheckIsAdmin');
         Route::post("/index", [CommentController::class, 'search'])->name('comments.search');
         Route::get("/update_stt/{id}&&{status}", [CommentController::class, 'update_stt'])->name('comments.update_stt');
-        Route::delete("/deleteMultiple", [CommentController::class, 'deleteMultiple'])->name('delete.Mulcomments')->middleware('CheckIsAdmin');
+        Route::delete("/deleteMultiple", [CommentController::class, 'deleteMultiple'])->name('delete.Mulcomments');
     });
 });
 // home controller
